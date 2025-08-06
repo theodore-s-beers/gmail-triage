@@ -31,7 +31,7 @@ type EmailAction int
 const (
 	ActionPass EmailAction = iota
 	ActionMarkRead
-	ActionDelete
+	ActionTrash
 	ActionSpam
 )
 
@@ -164,8 +164,9 @@ func (s *GmailService) PerformAction(messageID string, action EmailAction) error
 		_, err := s.service.Users.Messages.Modify(user, messageID, req).Do()
 		return err
 
-	case ActionDelete:
-		return s.service.Users.Messages.Delete(user, messageID).Do()
+	case ActionTrash:
+		_, err := s.service.Users.Messages.Trash(user, messageID).Do()
+		return err
 
 	case ActionSpam:
 		req := &gmail.ModifyMessageRequest{

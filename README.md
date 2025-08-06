@@ -46,7 +46,7 @@ The CLI will show each unread message with:
 For each message, choose:
 
 - `r` - Mark as read
-- `d` - Delete the message
+- `t` - Move to trash
 - `s` - Mark as spam
 - `p` - Pass (skip, do nothing)
 - `q` - Quit the program

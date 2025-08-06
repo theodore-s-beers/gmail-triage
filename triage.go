@@ -11,7 +11,7 @@ func startTriage(service *GmailService, messages []*EmailMessage) error {
 	reader := bufio.NewReader(os.Stdin)
 
 	fmt.Printf("\n📧 Found %d unread messages\n", len(messages))
-	fmt.Println("Commands: (r)ead, (d)elete, (s)pam, (p)ass, (q)uit")
+	fmt.Println("Commands: (r)ead, (t)rash, (s)pam, (p)ass, (q)uit")
 	fmt.Println(strings.Repeat("-", 60))
 
 	for i, msg := range messages {
@@ -88,8 +88,8 @@ func promptForAction(reader *bufio.Reader) (EmailAction, bool, error) {
 		switch input {
 		case "r", "read":
 			return ActionMarkRead, false, nil
-		case "d", "delete":
-			return ActionDelete, false, nil
+		case "t", "trash":
+			return ActionTrash, false, nil
 		case "s", "spam":
 			return ActionSpam, false, nil
 		case "p", "pass":
@@ -97,7 +97,7 @@ func promptForAction(reader *bufio.Reader) (EmailAction, bool, error) {
 		case "q", "quit":
 			return ActionPass, true, nil
 		default:
-			fmt.Println("Invalid option. Use: (r)ead, (d)elete, (s)pam, (p)ass, (q)uit")
+			fmt.Println("Invalid option. Use: (r)ead, (t)rash, (s)pam, (p)ass, (q)uit")
 			continue
 		}
 	}
@@ -107,8 +107,8 @@ func getActionDescription(action EmailAction) string {
 	switch action {
 	case ActionMarkRead:
 		return "Marked as read"
-	case ActionDelete:
-		return "Deleted"
+	case ActionTrash:
+		return "Moved to trash"
 	case ActionSpam:
 		return "Marked as spam"
 	case ActionPass:
