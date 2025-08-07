@@ -76,7 +76,7 @@ func displayMessage(current, total int, msg *EmailMessage) error {
 
 func promptForAction(reader *bufio.Reader) (EmailAction, bool, error) {
 	for {
-		fmt.Print("Action [r/d/s/p/q]: ")
+		fmt.Print("Action [r/t/s/p/q]: ")
 
 		input, err := reader.ReadString('\n')
 		if err != nil {
