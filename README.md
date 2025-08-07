@@ -24,7 +24,7 @@ this guide eventually._
 
 ```sh
 go mod tidy
-go build -o gmail-triage
+go build
 ./gmail-triage
 ```
 
