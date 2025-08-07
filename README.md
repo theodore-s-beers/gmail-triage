@@ -17,12 +17,13 @@ A simple command-line tool for quickly triaging unread Gmail messages.
    - Choose "Desktop application"
    - Download the JSON file; save as `credentials.json` in the project root
 
+_I had to go through some other steps, to placate Google. I'll try to update
+this guide eventually._
+
 ### Build and run
 
 ```sh
-go mod init gmail-triage
 go mod tidy
-
 go build -o gmail-triage
 ./gmail-triage
 ```
@@ -31,7 +32,7 @@ go build -o gmail-triage
 
 On first run, the app will:
 
-1. Open your browser for Gmail authorization
+1. Generate a link for Gmail authorization
 2. Save your OAuth token to `token.json`
 3. Start showing your unread messages
 
