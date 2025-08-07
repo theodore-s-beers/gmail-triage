@@ -1,4 +1,4 @@
-module gmail-triage
+module github.com/theodore-s-beers/gmail-triage
 
 go 1.23.0
 
