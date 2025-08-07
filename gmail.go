@@ -6,6 +6,9 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"regexp"
+	"strings"
+	"unicode"
 
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
@@ -134,7 +137,7 @@ func getUnreadMessages(service *GmailService) ([]*EmailMessage, error) {
 
 		email := &EmailMessage{
 			ID:      msg.Id,
-			Snippet: msg.Snippet,
+			Snippet: cleanSnippet(msg.Snippet),
 		}
 
 		for _, header := range msg.Payload.Headers {
@@ -182,4 +185,21 @@ func (s *GmailService) PerformAction(messageID string, action EmailAction) error
 		return fmt.Errorf("unknown action: %d", action)
 
 	}
+}
+
+func cleanSnippet(snippet string) string {
+	cleaned := strings.Map(func(r rune) rune {
+		if unicode.IsPrint(r) {
+			if unicode.IsSpace(r) {
+				return ' '
+			}
+
+			return r
+		}
+
+		return -1 // Remove non-printable characters
+	}, snippet)
+
+	re := regexp.MustCompile(`\s+`)
+	return strings.TrimSpace(re.ReplaceAllString(cleaned, " "))
 }
