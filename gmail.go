@@ -77,8 +77,8 @@ func getClient(config *oauth2.Config) *http.Client {
 
 func getTokenFromWeb(config *oauth2.Config) *oauth2.Token {
 	authURL := config.AuthCodeURL("state-token", oauth2.AccessTypeOffline)
-	fmt.Printf("Go to the following link in your browser then type the "+
-		"authorization code: \n%v\n", authURL)
+	fmt.Printf("Go to the following link, then paste the "+
+		"authorization code below: \n%v\n", authURL)
 
 	var authCode string
 	if _, err := fmt.Scan(&authCode); err != nil {
@@ -88,7 +88,7 @@ func getTokenFromWeb(config *oauth2.Config) *oauth2.Token {
 
 	tok, err := config.Exchange(context.TODO(), authCode)
 	if err != nil {
-		fmt.Printf("Unable to retrieve token from web: %v", err)
+		fmt.Printf("Unable to retrieve token: %v", err)
 		os.Exit(1)
 	}
 
@@ -113,7 +113,7 @@ func saveToken(path string, token *oauth2.Token) {
 
 	f, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o600)
 	if err != nil {
-		fmt.Printf("Unable to cache oauth token: %v", err)
+		fmt.Printf("Unable to cache OAuth token: %v", err)
 		return
 	}
 	defer f.Close()
