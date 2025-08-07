@@ -121,11 +121,19 @@ func saveToken(path string, token *oauth2.Token) {
 	json.NewEncoder(f).Encode(token)
 }
 
-func getUnreadMessages(service *GmailService) ([]*EmailMessage, error) {
+func getUnreadMessages(service *GmailService, searchString string) ([]*EmailMessage, error) {
 	user := "me"
 
+	// Build query: start with unread, add search string if provided
+	query := "is:unread"
+
+	searchString = strings.TrimSpace(searchString)
+	if searchString != "" {
+		query = fmt.Sprintf("is:unread %s", searchString)
+	}
+
 	// Returns a maximum of 100 messages by default
-	req := service.service.Users.Messages.List(user).Q("is:unread")
+	req := service.service.Users.Messages.List(user).Q(query)
 	resp, err := req.Do()
 	if err != nil {
 		return nil, fmt.Errorf("unable to retrieve messages: %v", err)

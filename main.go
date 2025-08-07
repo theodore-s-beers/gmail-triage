@@ -16,6 +16,12 @@ var rootCmd = &cobra.Command{
 	Run:   runTriage,
 }
 
+var searchString string
+
+func init() {
+	rootCmd.Flags().StringVarP(&searchString, "search", "s", "", "search string to filter messages (combined with unread)")
+}
+
 func main() {
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
@@ -32,8 +38,13 @@ func runTriage(cmd *cobra.Command, args []string) {
 		log.Fatalf("Failed to initialize Gmail service: %v", err)
 	}
 
-	fmt.Println("⏳ Fetching unread messages...")
-	messages, err := getUnreadMessages(service)
+	if searchString != "" {
+		fmt.Printf("⏳ Fetching unread messages matching '%s'...\n", searchString)
+	} else {
+		fmt.Println("⏳ Fetching unread messages...")
+	}
+
+	messages, err := getUnreadMessages(service, searchString)
 	if err != nil {
 		log.Fatalf("Failed to get unread messages: %v", err)
 	}
