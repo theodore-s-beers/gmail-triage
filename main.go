@@ -10,7 +10,7 @@ import (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "gmail-triage",
+	Use:   "gmail-triage [flags]",
 	Short: "A simple CLI for triaging unread Gmail messages",
 	Long:  `This tool allows quick triaging of unread Gmail messages from the command line`,
 	Run:   runTriage,
