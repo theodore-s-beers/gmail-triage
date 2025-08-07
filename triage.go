@@ -68,6 +68,7 @@ func displayMessage(current, total int, msg *EmailMessage) error {
 		if len(snippet) > 80 {
 			snippet = snippet[:77] + "..."
 		}
+
 		fmt.Printf("Preview: %s\n", snippet)
 	}
 
