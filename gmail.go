@@ -124,7 +124,8 @@ func saveToken(path string, token *oauth2.Token) {
 func getUnreadMessages(service *GmailService) ([]*EmailMessage, error) {
 	user := "me"
 
-	req := service.service.Users.Messages.List(user).Q("is:unread").MaxResults(50)
+	// Returns a maximum of 100 messages by default
+	req := service.service.Users.Messages.List(user).Q("is:unread")
 	resp, err := req.Do()
 	if err != nil {
 		return nil, fmt.Errorf("unable to retrieve messages: %v", err)
