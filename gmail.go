@@ -4,9 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"html"
 	"net/http"
 	"os"
 	"regexp"
+	"slices"
 	"strings"
 	"unicode"
 
@@ -187,9 +189,15 @@ func (s *GmailService) PerformAction(messageID string, action EmailAction) error
 	}
 }
 
+var badChars = []rune{
+	'\u034F', // COMBINING GRAPHEME JOINER
+}
+
 func cleanSnippet(snippet string) string {
+	decoded := html.UnescapeString(snippet) // Unescape HTML entities
+
 	cleaned := strings.Map(func(r rune) rune {
-		if unicode.IsPrint(r) {
+		if unicode.IsPrint(r) && !slices.Contains(badChars, r) {
 			if unicode.IsSpace(r) {
 				return ' '
 			}
@@ -198,8 +206,10 @@ func cleanSnippet(snippet string) string {
 		}
 
 		return -1 // Remove non-printable characters
-	}, snippet)
+	}, decoded)
 
 	re := regexp.MustCompile(`\s+`)
-	return strings.TrimSpace(re.ReplaceAllString(cleaned, " "))
+	reduced := re.ReplaceAllString(cleaned, " ")
+
+	return strings.TrimSpace(reduced)
 }
