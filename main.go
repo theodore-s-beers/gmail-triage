@@ -26,18 +26,20 @@ func main() {
 func runTriage(cmd *cobra.Command, args []string) {
 	ctx := context.Background()
 
+	fmt.Println("⏳ Initializing Gmail service...")
 	service, err := initGmailService(ctx)
 	if err != nil {
 		log.Fatalf("Failed to initialize Gmail service: %v", err)
 	}
 
+	fmt.Println("⏳ Fetching unread messages...")
 	messages, err := getUnreadMessages(service)
 	if err != nil {
 		log.Fatalf("Failed to get unread messages: %v", err)
 	}
 
 	if len(messages) == 0 {
-		fmt.Println("No unread messages!")
+		fmt.Println("🎉 No unread messages!")
 		return
 	}
 
