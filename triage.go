@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"unicode/utf8"
 )
 
 func startTriage(service *GmailService, messages []*EmailMessage) error {
@@ -44,20 +45,29 @@ func startTriage(service *GmailService, messages []*EmailMessage) error {
 	return nil
 }
 
+const maxFieldWidth = 66
+
+func truncateString(s string) string {
+	if utf8.RuneCountInString(s) <= maxFieldWidth {
+		return s
+	}
+
+	runes := []rune(s)
+	if len(runes) > maxFieldWidth {
+		return string(runes[:maxFieldWidth-3]) + "..."
+	}
+
+	return s
+}
+
 func displayMessage(current, total int, msg *EmailMessage) error {
 	fmt.Printf("\n[%d/%d]\n", current, total)
 
-	from := msg.From
-	if len(from) > 50 {
-		from = from[:47] + "..."
-	}
+	from := truncateString(msg.From)
 
-	subject := msg.Subject
+	subject := truncateString(msg.Subject)
 	if subject == "" {
 		subject = "(no subject)"
-	}
-	if len(subject) > 60 {
-		subject = subject[:57] + "..."
 	}
 
 	fmt.Printf("From:    %s\n", from)
@@ -65,11 +75,7 @@ func displayMessage(current, total int, msg *EmailMessage) error {
 	fmt.Printf("Date:    %s\n", msg.Date)
 
 	if msg.Snippet != "" {
-		snippet := msg.Snippet
-		if len(snippet) > 80 {
-			snippet = snippet[:77] + "..."
-		}
-
+		snippet := truncateString(msg.Snippet)
 		fmt.Printf("Preview: %s\n", snippet)
 	}
 
