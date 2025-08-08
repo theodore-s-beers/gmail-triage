@@ -28,6 +28,7 @@ type EmailMessage struct {
 	ID      string
 	From    string
 	Subject string
+	Date    string
 	Snippet string
 }
 
@@ -157,6 +158,8 @@ func getUnreadMessages(service *GmailService, searchString string) ([]*EmailMess
 				email.From = header.Value
 			case "Subject":
 				email.Subject = header.Value
+			case "Date":
+				email.Date = header.Value
 			}
 		}
 

@@ -45,7 +45,7 @@ func startTriage(service *GmailService, messages []*EmailMessage) error {
 }
 
 func displayMessage(current, total int, msg *EmailMessage) error {
-	fmt.Printf("\n[%d/%d] ", current, total)
+	fmt.Printf("\n[%d/%d]\n", current, total)
 
 	from := msg.From
 	if len(from) > 50 {
@@ -60,8 +60,9 @@ func displayMessage(current, total int, msg *EmailMessage) error {
 		subject = subject[:57] + "..."
 	}
 
-	fmt.Printf("From: %s\n", from)
+	fmt.Printf("From:    %s\n", from)
 	fmt.Printf("Subject: %s\n", subject)
+	fmt.Printf("Date:    %s\n", msg.Date)
 
 	if msg.Snippet != "" {
 		snippet := msg.Snippet
