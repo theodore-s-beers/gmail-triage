@@ -13,7 +13,7 @@ func startTriage(service *GmailService, messages []*EmailMessage) error {
 
 	fmt.Printf("\n📧 Found %d unread messages\n", len(messages))
 	fmt.Println("Commands: (r)ead, (t)rash, (s)pam, (p)ass, (q)uit")
-	fmt.Println(strings.Repeat("-", 60))
+	fmt.Println(strings.Repeat("-", 64))
 
 	for i, msg := range messages {
 		if err := displayMessage(i+1, len(messages), msg); err != nil {
@@ -26,7 +26,7 @@ func startTriage(service *GmailService, messages []*EmailMessage) error {
 		}
 
 		if quit {
-			fmt.Println("Goodbye!")
+			fmt.Println("\nGoodbye!")
 			break
 		}
 
@@ -84,7 +84,7 @@ func displayMessage(current, total int, msg *EmailMessage) error {
 
 func promptForAction(reader *bufio.Reader) (EmailAction, bool, error) {
 	for {
-		fmt.Print("Action [r/t/s/p/q]: ")
+		fmt.Print("Action?  [r/t/s/p/q] ")
 
 		input, err := reader.ReadString('\n')
 		if err != nil {

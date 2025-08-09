@@ -39,9 +39,9 @@ func runTriage(cmd *cobra.Command, args []string) {
 	}
 
 	if searchString != "" {
-		fmt.Printf("⏳ Fetching unread messages matching '%s'...\n", searchString)
+		fmt.Printf("\n⏳ Fetching unread messages matching '%s'...\n", searchString)
 	} else {
-		fmt.Println("⏳ Fetching unread messages...")
+		fmt.Println("\n⏳ Fetching unread messages...")
 	}
 
 	messages, err := getUnreadMessages(service, searchString)
