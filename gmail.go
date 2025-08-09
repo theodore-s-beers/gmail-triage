@@ -140,11 +140,19 @@ func getUnreadMessages(service *GmailService, searchString string) ([]*EmailMess
 		return nil, fmt.Errorf("unable to retrieve messages: %v", err)
 	}
 
+	total := len(resp.Messages)
+	if total == 0 {
+		return []*EmailMessage{}, nil
+	}
+
+	fmt.Printf("⏳ Found %d message IDs; fetching details...\n", total)
+
 	var messages []*EmailMessage
-	for _, m := range resp.Messages {
+	for i, m := range resp.Messages {
 		msg, err := service.service.Users.Messages.Get(user, m.Id).Do()
 		if err != nil {
-			continue // Skip irretrievable messages
+			fmt.Printf("⚠️ Skipping message %d/%d due to error: %v\n", i+1, total, err)
+			continue
 		}
 
 		email := &EmailMessage{
@@ -164,6 +172,11 @@ func getUnreadMessages(service *GmailService, searchString string) ([]*EmailMess
 		}
 
 		messages = append(messages, email)
+
+		// Print progress after every 10 attempted fetches (or at the end)
+		if (i+1)%10 == 0 || i+1 == total {
+			fmt.Printf("⏳ Fetched %d/%d messages\n", i+1, total)
+		}
 	}
 
 	return messages, nil
