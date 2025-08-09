@@ -1,6 +1,6 @@
 # Gmail Triage CLI
 
-A simple command-line tool for quickly triaging unread Gmail messages.
+This is a command-line tool meant for quick triage of unread Gmail messages.
 
 ## Setup
 
@@ -11,14 +11,17 @@ A simple command-line tool for quickly triaging unread Gmail messages.
 3. Enable the Gmail API:
    - Go to "APIs & Services" > "Library"
    - Search for "Gmail API" and enable it
-4. Create credentials:
+4. Generate credentials:
    - Go to "APIs & Services" > "Credentials"
    - Click "Create Credentials" > "OAuth client ID"
-   - Choose "Desktop application"
+   - Choose "Desktop application" and enter a name for your client
    - Download the JSON file; save as `credentials.json` in the project root
+5. Add yourself as a user
+   - Go to "APIs & Services" > "OAuth consent screen"
+   - Complete whatever steps Google requires (e.g., "Branding")
+   - Add your own Gmail address under "Audience" > "Test users"
 
-_I had to go through some other steps, to placate Google. I'll try to update
-this guide eventually._
+_Parts of this process can be confusing; but you only need to do it once._
 
 ### Build and run
 
@@ -42,33 +45,34 @@ The CLI will show each unread message with:
 
 - Sender
 - Subject line
+- Date
 - Preview snippet
 
 For each message, choose:
 
-- `r` - Mark as read
-- `t` - Move to trash
-- `s` - Mark as spam
-- `p` - Pass (skip, do nothing)
-- `q` - Quit the program
+- `r`: Mark as read
+- `t`: Move to trash
+- `s`: Mark as spam
+- `p`: Pass (skip, do nothing)
+- `q`: Quit the program
 
-## Security Notes
+## Security notes
 
 - Keep `credentials.json` and `token.json` private
-- Add them to `.gitignore` if using version control
+- Ensure these files are in `.gitignore` if using version control
 - The OAuth token will refresh automatically when needed
 
 ## TODO
 
-1. **Test OAuth flow** - Make sure authentication works end-to-end
-2. **Error handling** - Add better error handling throughout
-3. **Rate limiting** - Add delays between API calls if needed
-4. **Batch operations** - Consider batching actions for better performance
-5. **Configuration** - Add config file for preferences (max messages, etc.)
-6. **Enhanced display** - Maybe add colors or better formatting
-7. **Undo functionality** - Cache recent actions in case of mistakes
+1. **Test OAuth flow** – Make sure authentication works end-to-end
+2. **Error handling** – Add better error handling throughout
+3. **Rate limiting** – Add delays between API calls if needed
+4. **Batch operations** – Consider batching actions for better performance
+5. **Configuration** – Add config file for preferences (max messages, etc.)
+6. **Enhanced display** – Maybe add colors or better formatting
+7. **Undo functionality** – Cache recent actions in case of mistakes
 
-## API Limits
+## API limits
 
 The Gmail API allows:
 
@@ -76,4 +80,5 @@ The Gmail API allows:
 - Most operations cost 1–5 units
 - Should be fine for personal use
 
-The current implementation fetches up to 50 unread messages at once.
+The current implementation fetches, by default, up to 50 unread messages at a
+time.
