@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/spf13/cobra"
 )
@@ -16,10 +17,16 @@ var rootCmd = &cobra.Command{
 	Run:   runTriage,
 }
 
-var searchString string
+var (
+	maxAge       int
+	maxResults   int
+	searchString string
+)
 
 func init() {
-	rootCmd.Flags().StringVarP(&searchString, "search", "s", "", "search string to filter messages (combined with unread)")
+	rootCmd.Flags().IntVarP(&maxAge, "max-age", "a", -1, "maximum age of messages in days")
+	rootCmd.Flags().IntVarP(&maxResults, "max-results", "m", 50, "maximum number of messages to fetch")
+	rootCmd.Flags().StringVarP(&searchString, "search", "s", "", "search string to filter unread messages")
 }
 
 func main() {
@@ -38,13 +45,23 @@ func runTriage(cmd *cobra.Command, args []string) {
 		log.Fatalf("Failed to initialize Gmail service: %v", err)
 	}
 
-	if searchString != "" {
-		fmt.Printf("\n⏳ Fetching unread messages matching '%s'...\n", searchString)
-	} else {
-		fmt.Println("\n⏳ Fetching unread messages...")
+	maxResults = max(1, min(maxResults, 100))
+	fmt.Printf("\n- Will search for up to %d unread messages\n", maxResults)
+
+	if 0 <= maxAge && maxAge <= 365 {
+		if maxAge == 1 {
+			fmt.Printf("- With a maximum age of %d day\n", maxAge)
+		} else {
+			fmt.Printf("- With a maximum age of %d days\n", maxAge)
+		}
 	}
 
-	messages, err := getUnreadMessages(service, searchString)
+	searchString = strings.TrimSpace(searchString)
+	if searchString != "" {
+		fmt.Printf("- Matching the keyword(s) '%s'\n", searchString)
+	}
+
+	messages, err := getUnreadMessages(service, maxAge, maxResults, searchString)
 	if err != nil {
 		log.Fatalf("Failed to get unread messages: %v", err)
 	}

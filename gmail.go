@@ -10,6 +10,7 @@ import (
 	"regexp"
 	"slices"
 	"strings"
+	"time"
 	"unicode"
 
 	"golang.org/x/oauth2"
@@ -122,19 +123,26 @@ func saveToken(path string, token *oauth2.Token) {
 	json.NewEncoder(f).Encode(token)
 }
 
-func getUnreadMessages(service *GmailService, searchString string) ([]*EmailMessage, error) {
+func getUnreadMessages(
+	service *GmailService,
+	maxAge int, maxResults int, searchString string,
+) ([]*EmailMessage, error) {
 	user := "me"
 
-	// Build query: start with unread, add search string if provided
+	// Build query, starting with unread
 	query := "is:unread"
 
-	searchString = strings.TrimSpace(searchString)
-	if searchString != "" {
-		query = fmt.Sprintf("is:unread %s", searchString)
+	if 0 <= maxAge && maxAge <= 365 {
+		query = fmt.Sprintf("%s after:%s", query, ageToDate(maxAge))
 	}
 
-	// Returns a maximum of 100 messages by default
-	req := service.service.Users.Messages.List(user).Q(query)
+	// Already trimmed
+	if searchString != "" {
+		query = fmt.Sprintf("%s %s", query, searchString)
+	}
+
+	// maxResults already clamped to [1, 100]
+	req := service.service.Users.Messages.List(user).Q(query).MaxResults(int64(maxResults))
 	resp, err := req.Do()
 	if err != nil {
 		return nil, fmt.Errorf("unable to retrieve messages: %v", err)
@@ -145,7 +153,7 @@ func getUnreadMessages(service *GmailService, searchString string) ([]*EmailMess
 		return []*EmailMessage{}, nil
 	}
 
-	fmt.Printf("⏳ Found %d message IDs; fetching details...\n", total)
+	fmt.Printf("\n⏳ Found %d message IDs; fetching details...\n", total)
 
 	var messages []*EmailMessage
 	for i, m := range resp.Messages {
@@ -212,6 +220,11 @@ func (s *GmailService) PerformAction(messageID string, action EmailAction) error
 		return fmt.Errorf("unknown action: %d", action)
 
 	}
+}
+
+func ageToDate(age int) string {
+	targetDate := time.Now().AddDate(0, 0, -age)
+	return targetDate.Format("2006/01/02")
 }
 
 var badChars = []rune{
